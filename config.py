@@ -1,10 +1,19 @@
 import os
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "change-this-in-prod")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///nemtas_tugra.db")
+    # Flask gizli anahtar (CSRF, session için)
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "super-secret-key"
+
+    # SQLite veritabanı dosyası
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "apartman.db")
+
+    # SQLAlchemy ayarları
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
-    UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
-    ALLOWED_EXTENSIONS = {"pdf", "jpg", "jpeg", "png"}
-    APARTMENT_NAME = "Nemtaş Tuğra Apartmanı"
+
+    # Upload klasörü
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf"}
+
+    # Debug modu (Render’da kapalı, yerelde açık olabilir)
+    DEBUG = True
