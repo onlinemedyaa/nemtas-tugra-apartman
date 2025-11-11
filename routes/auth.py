@@ -1,54 +1,34 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
+from flask_login import login_user, logout_user, login_required
+from werkzeug.security import check_password_hash
 from models import db, User
-from services.auth import verify_pin, validate_phone
-from werkzeug.security import generate_password_hash
 
-auth_bp = Blueprint('auth', __name__)
-login_manager = LoginManager()
-login_manager.login_view = "auth.login"
+auth_bp = Blueprint("auth", __name__, url_prefix="/")
 
-class LoginUser(UserMixin):
-    def __init__(self, user):
-        self.id = user.id
-        self.role = user.role
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
+# Giriş sayfası
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        phone = request.form.get("phone", "").strip()
-        pin = request.form.get("pin", "").strip()
-        if not validate_phone(phone):
-            flash("Geçersiz telefon.", "danger")
-            return render_template("login.html")
+        phone = request.form.get("phone")
+        pin = request.form.get("pin")
+
         user = User.query.filter_by(phone=phone).first()
-        if not user or not verify_pin(user.pin_hash, pin):
-            flash("Telefon veya PIN hatalı.", "danger")
-            return render_template("login.html")
-        login_user(user)
-        return redirect(url_for("dashboard"))
+        if user and check_password_hash(user.pin_hash, pin):
+            login_user(user)
+            flash("Giriş başarılı", "success")
+            if user.role == "admin":
+                return redirect(url_for("dashboard.admin_dashboard"))
+            else:
+                return redirect(url_for("dashboard.resident_dashboard"))
+        else:
+            flash("Telefon veya PIN hatalı", "danger")
+
     return render_template("login.html")
 
+# Çıkış
 @auth_bp.route("/logout")
 @login_required
 def logout():
     logout_user()
+    flash("Çıkış yapıldı", "info")
     return redirect(url_for("auth.login"))
-
-@auth_bp.route("/set-pin", methods=["GET", "POST"])
-@login_required
-def set_pin():
-    if request.method == "POST":
-        new_pin = request.form.get("pin", "").strip()
-        if len(new_pin) != 6 or not new_pin.isdigit():
-            flash("PIN 6 haneli olmalı.", "danger")
-            return render_template("profile.html")
-        user = User.query.get(current_user.id)
-        user.pin_hash = generate_password_hash(new_pin)
-        db.session.commit()
-        flash("PIN güncellendi.", "success")
-    return render_template("profile.html")
