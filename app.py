@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_login import LoginManager
 from config import Config
 from models import db, User, Flat
@@ -37,11 +37,16 @@ app.register_blueprint(payments_bp)
 app.register_blueprint(reports_bp)
 app.register_blueprint(admin_bp)
 
-# İlk çalıştırmada tablolar ve seed otomatik
-with app.app_context():
+# Kök URL yönlendirmesi
+@app.route("/")
+def index():
+    return redirect(url_for("auth.login"))
+
+def seed_data():
+    """İlk çalıştırmada tabloları ve başlangıç verilerini ekler."""
     db.create_all()
 
-    # Yönetici hesabı ekle
+    # Yönetici hesabı
     if not User.query.filter_by(phone="5550000000").first():
         admin = User(
             phone="5550000000",
@@ -62,7 +67,9 @@ with app.app_context():
             db.session.add(Flat(block="B", number=i))
 
     db.session.commit()
-    print("Seed tamamlandı: Yönetici ve daireler eklendi.")
+    app.logger.info("Seed tamamlandı: Yönetici ve daireler eklendi.")
 
 if __name__ == "__main__":
+    with app.app_context():
+        seed_data()
     app.run(host="0.0.0.0", port=5000, debug=True)
