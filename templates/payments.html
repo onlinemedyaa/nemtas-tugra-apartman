@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h5>Ödeme Geçmişi</h5>
+<table class="table table-striped">
+  <thead><tr><th>Tarih</th><th>Daire</th><th>Tutar</th><th>Not</th><th>Dekont</th></tr></thead>
+  <tbody>
+  {% for p in items %}
+    <tr>
+      <td>{{p.date}}</td>
+      <td>{{p.flat_id}}</td>
+      <td>{{"%.2f"|format(p.amount)}}</td>
+      <td>{{p.note}}</td>
+      <td>
+        {% if p.receipt_path %}
+          <a href="/uploads/{{p.receipt_path}}" target="_blank">Görüntüle</a>
+        {% else %}
+          <form method="post" action="/payments/{{p.id}}/receipt" enctype="multipart/form-data">
+            <input type="file" name="file" class="form-control form-control-sm" required>
+            <button class="btn btn-sm btn-secondary mt-1">Yükle</button>
+          </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

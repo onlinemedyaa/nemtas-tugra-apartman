@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h4>Kasa Raporu {% if month %}— {{month}}{% endif %}</h4>
+{% if data %}
+  <div class="row">
+    <div class="col-md-4">
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between"><span>Toplam Gelir</span><strong>{{"%.2f"|format(data.total_income)}}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Toplam Gider</span><strong>{{"%.2f"|format(data.total_expense)}}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Kasa Bakiye</span><strong>{{"%.2f"|format(data.cash_balance)}}</strong></li>
+      </ul>
+      <div class="mt-3">
+        <a class="btn btn-outline-primary" href="/export/cash-report.csv?month={{month}}">CSV İndir</a>
+        <a class="btn btn-outline-primary" href="/export/cash-report.xlsx?month={{month}}">Excel İndir</a>
+        <a class="btn btn-outline-danger" href="/export/cash-report.pdf?month={{month}}">PDF İndir</a>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <canvas id="catChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    fetch(`/chart-data?month={{month}}`)
+      .then(r => r.json())
+      .then(d => {
+        const ctx = document.getElementById('catChart');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: d.labels,
+            datasets: [{
+              label: 'Giderler',
+              data: d.values,
+              backgroundColor: ['#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f','#edc949','#af7aa1','#ff9da7']
+            }]
+          },
+          options: {
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      });
+  </script>
+{% else %}
+  <p>Ay seçilmedi. Yönetici panelinden veya bu sayfanın URL’inde ?month=YYYY-MM ekleyerek rapora erişebilirsin.</p>
+{% endif %}
+{% endblock %}

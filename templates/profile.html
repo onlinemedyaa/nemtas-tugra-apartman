@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h5>Profil ve Daire Bilgileri</h5>
+{% if flat %}
+  <p><strong>Daire Kodu:</strong> {{flat.code}} | <strong>Blok:</strong> {{flat.block}} | <strong>No:</strong> {{flat.number}}</p>
+{% else %}
+  <p>Daire ataması yapılmamış.</p>
+{% endif %}
+<hr>
+<h6>PIN Güncelle</h6>
+<form method="post" action="/set-pin">
+  <div class="row">
+    <div class="col-md-4">
+      <label class="form-label">Yeni PIN (6 haneli)</label>
+      <input class="form-control" name="pin" required>
+    </div>
+  </div>
+  <button class="btn btn-primary mt-2">Güncelle</button>
+</form>
+{% endblock %}

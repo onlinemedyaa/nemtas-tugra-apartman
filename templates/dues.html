@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h5>Aidatlar {% if month %}— {{month}}{% endif %}</h5>
+<table class="table table-bordered">
+  <thead><tr><th>Daire</th><th>Ay</th><th>Toplam Gider</th><th>Kişi Başı Aidat</th><th>Ödenen</th><th>Kalan</th></tr></thead>
+  <tbody>
+  {% for d in items %}
+    <tr>
+      <td>{{ d.flat_id }}</td>
+      <td>{{ d.month }}</td>
+      <td>{{"%.2f"|format(d.total_expense_month)}}</td>
+      <td>{{"%.2f"|format(d.per_flat_due)}}</td>
+      <td>{{"%.2f"|format(d.paid_amount or 0)}}</td>
+      <td>{{"%.2f"|format(d.balance or 0)}}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

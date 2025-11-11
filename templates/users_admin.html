@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h4>Kullanıcı Yönetimi</h4>
+<div class="card"><div class="card-body">
+  <form class="row g-2" method="post" action="/admin/users">
+    <div class="col-md-3"><input class="form-control" name="name" placeholder="İsim" required></div>
+    <div class="col-md-3"><input class="form-control" name="phone" placeholder="+905xxxxxxxxx" required></div>
+    <div class="col-md-3">
+      <select class="form-select" name="role">
+        <option value="resident">Sakin</option>
+        <option value="admin">Yönetici</option>
+      </select>
+    </div>
+    <div class="col-md-3"><input class="form-control" name="pin" placeholder="PIN (6 haneli)" required></div>
+    <div class="col-12"><button class="btn btn-primary">Kullanıcı Ekle</button></div>
+  </form>
+</div></div>
+
+<div class="card mt-3"><div class="card-body">
+  <h5>Daire Atama</h5>
+  <form class="row g-2" method="post" action="/admin/assign">
+    <div class="col-md-4">
+      <select class="form-select" name="user_id" required>
+        {% for u in users %}
+          <option value="{{u.id}}">{{u.name}} ({{u.phone}})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <select class="form-select" name="flat_id" required>
+        {% for f in flats %}
+          <option value="{{f.id}}">{{f.code}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-success">Ata</button>
+    </div>
+  </form>
+</div></div>
+{% endblock %}
