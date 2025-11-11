@@ -1,23 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Telefon + PIN ile giriş</h5>
-        <form method="post">
-          <div class="mb-3">
-            <label class="form-label">Telefon (+905xxxxxxxxx)</label>
-            <input type="text" name="phone" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">PIN (6 haneli)</label>
-            <input type="password" name="pin" class="form-control" required>
-          </div>
-          <button class="btn btn-primary w-100" type="submit">Giriş Yap</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+<h1>Giriş Yap</h1>
+<form method="post">
+  <label>Telefon</label>
+  <input type="text" name="phone" placeholder="5550000000" required>
+  <label>PIN</label>
+  <input type="password" name="pin" placeholder="123456" required>
+  <button type="submit">Giriş</button>
+</form>
 {% endblock %}
