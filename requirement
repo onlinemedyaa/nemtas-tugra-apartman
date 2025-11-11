@@ -5,3 +5,4 @@ flask_wtf
 werkzeug
 pandas
 reportlab
+gunicorn
