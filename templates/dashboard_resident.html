@@ -1,33 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<h4>Sakin Paneli</h4>
-<div class="card"><div class="card-body">
-  <h5>Borç/Aidat görüntüleme</h5>
-  <form method="get" action="/dues">
-    <label class="form-label">Ay (YYYY-MM)</label>
-    <input class="form-control" name="month" placeholder="2025-11">
-    <button class="btn btn-primary mt-2">Göster</button>
-  </form>
-  <hr>
-  <h5>Ödeme ekle</h5>
-  <form method="post" action="/payments" enctype="multipart/form-data">
-    <div class="row">
-      <div class="col-md-4">
-        <label class="form-label">Ay (YYYY-MM)</label>
-        <input class="form-control" name="month" placeholder="2025-11" required>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Tutar (TL)</label>
-        <input class="form-control" type="number" step="0.01" name="amount" required>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Not</label>
-        <input class="form-control" name="note">
-      </div>
-    </div>
-    <button class="btn btn-success mt-2">Ödemeyi Kaydet</button>
-  </form>
-  <a class="btn btn-link mt-2" href="/payments">Ödeme Geçmişi</a>
-  <a class="btn btn-link mt-2" href="/expenses">Aylık Giderler</a>
-</div></div>
+<h1>Sakin Paneli</h1>
+<p>Hoş geldiniz, {{ current_user.name }}.</p>
+<p>Aidatlar ve ödemeler yakında burada görünecek.</p>
 {% endblock %}
