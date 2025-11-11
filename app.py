@@ -15,10 +15,10 @@ from routes.admin import admin_bp
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Veritabanı başlatma
+# Veritabanı
 db.init_app(app)
 
-# Login Manager ayarları
+# Login Manager
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.init_app(app)
@@ -36,8 +36,9 @@ app.register_blueprint(payments_bp)
 app.register_blueprint(reports_bp)
 app.register_blueprint(admin_bp)
 
-# Ana çalıştırma
+# İlk çalıştırmada tabloları oluştur
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()   # Tabloları oluşturur
     app.run(host="0.0.0.0", port=5000, debug=True)
