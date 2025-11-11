@@ -9,9 +9,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone = db.Column(db.String(20), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False)  # "admin" veya "resident"
+    role = db.Column(db.String(20), nullable=False)
     pin_hash = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 
     # İlişkiler
     flats = db.relationship("Flat", backref="owner", lazy=True)
@@ -69,3 +70,4 @@ class AuditLog(db.Model):
     entity_id = db.Column(db.Integer, nullable=False)
     details = db.Column(db.String(200))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
