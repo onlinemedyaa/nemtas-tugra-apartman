@@ -1,123 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<h4>Yönetici Paneli</h4>
-<div class="row g-3">
-  <div class="col-md-6">
-    <div class="card"><div class="card-body">
-      <h5>Giderler</h5>
-      <form method="post" action="/admin/expenses">
-        <div class="row">
-          <div class="col-md-3">
-            <label class="form-label">Ay (YYYY-MM)</label>
-            <input class="form-control" name="month" placeholder="2025-11" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Kategori</label>
-            <select class="form-select" name="category" required>
-              <option>Elektrik</option>
-              <option>Bina Temizlik</option>
-              <option>Çöp Alımı</option>
-              <option>Asansör Bakım</option>
-              <option>Su</option>
-              <option>Ek Tamir Masrafı</option>
-              <option>Olağan Dışı Gider</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Kapsam</label>
-            <select class="form-select" name="scope" required>
-              <option value="all">Tüm Daireler</option>
-              <option value="A">A Blok</option>
-              <option value="B">B Blok</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Tutar (TL)</label>
-            <input class="form-control" name="amount" type="number" step="0.01" required>
-          </div>
-        </div>
-        <div class="mt-2">
-          <input class="form-control" name="description" placeholder="Açıklama">
-        </div>
-        <button class="btn btn-secondary mt-2">Gider Ekle</button>
-        <a class="btn btn-link" href="/expenses">Gider Listesi</a>
-      </form>
-    </div></div>
-  </div>
+<h1>Yönetici Paneli</h1>
 
-  <div class="col-md-6">
-    <div class="card"><div class="card-body">
-      <h5>Ay için Aidat Oluştur</h5>
-      <form method="post" action="/admin/dues/generate">
-        <label class="form-label">Ay (YYYY-MM)</label>
-        <input class="form-control" name="month" placeholder="2025-11" required>
-        <button class="btn btn-primary mt-2">Aidat Hesapla</button>
-        <a class="btn btn-link" href="/dues">Aidat Listesi</a>
-      </form>
-    </div></div>
-  </div>
-</div>
+<section>
+  <h2>Özet</h2>
+  <ul>
+    <li>Toplam gider: {{ total_expenses or 0 }}</li>
+    <li>Toplam ödeme: {{ total_payments or 0 }}</li>
+    <li>Toplam bakiye (aidat): {{ total_balance or 0 }}</li>
+    <li>Daire sayısı: {{ flats_count or 0 }}</li>
+  </ul>
+</section>
 
-<div class="row g-3 mt-1">
-  <div class="col-md-6">
-    <div class="card"><div class="card-body">
-      <h5>Kasa Raporu ve Grafikler</h5>
-      <form class="row" method="get" action="/cash-report">
-        <div class="col-md-6">
-          <label class="form-label">Ay (YYYY-MM)</label>
-          <input class="form-control" name="month" placeholder="2025-11" required>
-        </div>
-        <div class="col-md-6 d-grid">
-          <button class="btn btn-success mt-4">Raporu Gör</button>
-        </div>
-      </form>
-      <div class="mt-2">
-        <a class="btn btn-outline-primary" id="csvLink">CSV İndir</a>
-        <a class="btn btn-outline-primary" id="xlsxLink">Excel İndir</a>
-        <a class="btn btn-outline-danger" id="pdfLink">PDF İndir</a>
-      </div>
-      <script>
-        const monthInput = document.querySelector('input[name="month"]');
-        const csvLink = document.getElementById('csvLink');
-        const xlsxLink = document.getElementById('xlsxLink');
-        const pdfLink = document.getElementById('pdfLink');
-        function updateLinks(){
-          const m = monthInput.value || '';
-          csvLink.href = `/export/cash-report.csv?month=${m}`;
-          xlsxLink.href = `/export/cash-report.xlsx?month=${m}`;
-          pdfLink.href = `/export/cash-report.pdf?month=${m}`;
-        }
-        monthInput.addEventListener('input', updateLinks);
-        updateLinks();
-      </script>
-    </div></div>
-  </div>
+<section>
+  <h2>Giderler</h2>
+  <a href="{{ url_for('expenses.list_expenses') }}">Gider Listesi</a> |
+  <a href="{{ url_for('expenses.add_expense') }}">Yeni Gider Ekle</a>
+</section>
 
-  <div class="col-md-6">
-    <div class="card"><div class="card-body">
-      <h5>Kullanıcı Yönetimi</h5>
-      <form method="post" action="/admin/users">
-        <div class="row">
-          <div class="col-md-3">
-            <input class="form-control" name="name" placeholder="İsim" required>
-          </div>
-          <div class="col-md-3">
-            <input class="form-control" name="phone" placeholder="+905xxxxxxxxx" required>
-          </div>
-          <div class="col-md-3">
-            <select class="form-select" name="role">
-              <option value="resident">Sakin</option>
-              <option value="admin">Yönetici</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <input class="form-control" name="pin" placeholder="PIN (6 haneli)" required>
-          </div>
-        </div>
-        <button class="btn btn-primary mt-2">Kullanıcı Ekle</button>
-        <a class="btn btn-link" href="/admin/users">Detaylı Yönetim</a>
-      </form>
-    </div></div>
-  </div>
-</div>
+<section>
+  <h2>Aidat Hesaplama</h2>
+  <form method="post" action="{{ url_for('dues.calculate_dues') }}">
+    <input type="text" name="month" placeholder="YYYY-MM" required>
+    <select name="scope">
+      <option value="all">Tüm blok</option>
+      <option value="A">A blok</option>
+      <option value="B">B blok</option>
+    </select>
+    <button type="submit">Hesapla</button>
+  </form>
+</section>
+
+<section>
+  <h2>Ödeme Ekle</h2>
+  <form method="post" action="{{ url_for('payments.add_payment') }}">
+    <input type="number" step="0.01" name="amount" placeholder="Tutar" required>
+    <input type="number" name="flat_id" placeholder="Daire ID" required>
+    <input type="text" name="month" placeholder="YYYY-MM" required>
+    <button type="submit">Ekle</button>
+  </form>
+</section>
+
 {% endblock %}
