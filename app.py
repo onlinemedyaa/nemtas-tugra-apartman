@@ -67,7 +67,7 @@ def seed_data():
             db.session.add(Flat(block="B", number=i))
 
     db.session.commit()
-    app.logger.info("Seed tamamlandı: Yönetici ve daireler eklendi.")
+    print("Seed tamamlandı: Yönetici ve daireler eklendi.")
 
 if __name__ == "__main__":
     with app.app_context():
