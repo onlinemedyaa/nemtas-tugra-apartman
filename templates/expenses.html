@@ -1,39 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<h5>Giderler {% if month %}— {{month}}{% endif %}</h5>
-<form class="row mb-2" method="get">
-  <div class="col-md-3">
-    <input class="form-control" name="month" placeholder="2025-11" value="{{month or ''}}">
-  </div>
-  <div class="col-md-2">
-    <button class="btn btn-outline-primary">Filtrele</button>
-  </div>
-</form>
-<table class="table table-striped">
-  <thead><tr><th>Tarih</th><th>Ay</th><th>Kategori</th><th>Kapsam</th><th>Açıklama</th><th>Tutar</th><th>Makbuz</th></tr></thead>
-  <tbody>
-  {% for e in items %}
+<h1>Gider Listesi</h1>
+<table>
+  <thead>
     <tr>
-      <td>{{e.date}}</td>
-      <td>{{e.month}}</td>
-      <td>{{e.category}}</td>
-      <td>{{e.scope}}</td>
-      <td>{{e.description}}</td>
-      <td>{{"%.2f"|format(e.amount)}}</td>
-      <td>
-        {% if e.receipt_path %}
-          <a href="/uploads/{{e.receipt_path}}" target="_blank">Görüntüle</a>
-        {% else %}
-          {% if current_user.role == "admin" %}
-          <form method="post" action="/admin/expenses/{{e.id}}/receipt" enctype="multipart/form-data">
-            <input type="file" name="file" class="form-control form-control-sm" required>
-            <button class="btn btn-sm btn-secondary mt-1">Yükle</button>
-          </form>
-          {% endif %}
-        {% endif %}
-      </td>
+      <th>Tarih</th><th>Ay</th><th>Kategori</th><th>Açıklama</th><th>Tutar</th><th>Kapsam</th><th>Makbuz</th>
     </tr>
-  {% endfor %}
+  </thead>
+  <tbody>
+    {% for e in expenses %}
+    <tr>
+      <td>{{ e.date.strftime("%Y-%m-%d") }}</td>
+      <td>{{ e.month }}</td>
+      <td>{{ e.category }}</td>
+      <td>{{ e.description }}</td>
+      <td>{{ e.amount }}</td>
+      <td>{{ e.scope }}</td>
+      <td>{% if e.receipt_path %}<a href="/{{ e.receipt_path }}" target="_blank">Makbuz</a>{% endif %}</td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
+<a href="{{ url_for('expenses.add_expense') }}">Yeni Gider Ekle</a>
 {% endblock %}
