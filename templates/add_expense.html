@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Yeni Gider Ekle</h1>
+<form method="post" enctype="multipart/form-data">
+  <label>Kategori</label>
+  <input type="text" name="category" required>
+  <label>Açıklama</label>
+  <input type="text" name="description">
+  <label>Tutar</label>
+  <input type="number" step="0.01" name="amount" required>
+  <label>Ay</label>
+  <input type="text" name="month" placeholder="YYYY-MM" required>
+  <label>Kapsam</label>
+  <select name="scope">
+    <option value="all">Tüm blok</option>
+    <option value="A">A blok</option>
+    <option value="B">B blok</option>
+  </select>
+  <label>Makbuz (opsiyonel)</label>
+  <input type="file" name="receipt">
+  <button type="submit">Kaydet</button>
+</form>
+{% endblock %}
